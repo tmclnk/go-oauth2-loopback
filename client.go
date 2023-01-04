@@ -105,7 +105,7 @@ func createCallbackHandler(ctx context.Context, conf *oauth2.Config, ch chan *oa
 
 // Exchanges an authorization code for an access token
 func exchange(code string, conf *oauth2.Config, ctx context.Context) (error, *oauth2.Token) {
-	log.Printf("Authentication Code: %s\n", code)
+	log.Printf("Code: %s\n", code)
 	tok, err := conf.Exchange(ctx, code)
 	if err != nil {
 		return err, nil
