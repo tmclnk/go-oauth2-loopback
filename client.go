@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // SetupClient creates an oauth2-enabled http client by launching a browser
@@ -46,14 +47,18 @@ func SetupClient(conf *oauth2.Config, ch chan *http.Client) {
 
 	// launch the server in a goroutine so this function doesn't block
 	go func() {
+		log.Printf("Listening on %s...\n", ListenAddress)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("%s\n", err)
 		}
 	}()
 
 	// open a web browser pointing to the auth server
-	authUrl := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
-	_ = open.Run(authUrl)
+	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	log.Printf("Sleeping...")
+	time.Sleep(10 * time.Second)
+	log.Printf("Opening browser at %s\n", url)
+	_ = open.Run(url)
 }
 
 // Creates handler that receives the authorization code from the auth server
@@ -100,11 +105,12 @@ func createCallbackHandler(ctx context.Context, conf *oauth2.Config, ch chan *oa
 
 // Exchanges an authorization code for an access token
 func exchange(code string, conf *oauth2.Config, ctx context.Context) (error, *oauth2.Token) {
-	log.Printf("Code: %s\n", code)
+	log.Printf("Authentication Code: %s\n", code)
 	tok, err := conf.Exchange(ctx, code)
 	if err != nil {
 		return err, nil
 	}
-	log.Printf("Token: %s", tok)
+	log.Printf("Token Type: %s\n", tok.TokenType)
+	log.Printf("Access Token: %s\n", tok.AccessToken)
 	return nil, tok
 }
