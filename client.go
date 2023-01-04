@@ -63,10 +63,21 @@ func createCallbackHandler(ctx context.Context, conf *oauth2.Config, ch chan *oa
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Exchange authorization code for access token
 		queryParts, _ := url.ParseQuery(r.URL.RawQuery)
+
+		if queryParts["code"] == nil && len(queryParts["code"]) > 0 {
+			msg := fmt.Sprintf("Token exchange failed! Missing 'code' parameter.")
+			_, _ = fmt.Fprintf(w, msg)
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println(msg)
+			return
+		}
+
 		code := queryParts["code"][0]
 		err, tok := exchange(code, conf, ctx)
+
 		if err != nil {
-			_, _ = fmt.Fprintf(w, "Token exchange failed!")
+			msg := fmt.Sprintf("Token exchange failed! %s", err.Error())
+			_, _ = fmt.Fprintf(w, msg)
 			w.WriteHeader(http.StatusBadRequest)
 			log.Println(err)
 			return
