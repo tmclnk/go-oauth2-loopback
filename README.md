@@ -11,16 +11,18 @@ The app will look for these environment variables.
 ```shell
 LISTEN_ADDRESS=:9999
 REDIRECT_URL=http://127.0.0.1:9999/oauth/callback
+
+## Get these from your Auth provider
 CLIENT_ID=
 AUTH_URL=
 TOKEN_URL=
+RESOURCE_URL=
 ```
 
 ## Running
 
 ```shell
-# set the environment variables above
-make run
+go run .
 ```
 
 ## Related Links

@@ -13,6 +13,7 @@ var AuthURL = os.Getenv("AUTH_URL")
 var TokenURL = os.Getenv("TOKEN_URL")
 var RedirectURL = os.Getenv("REDIRECT_URL")
 var ListenAddress = os.Getenv("LISTEN_ADDRESS")
+var ResourceURL = os.Getenv("RESOURCE_URL")
 
 func main() {
 	var conf = &oauth2.Config{
@@ -43,13 +44,14 @@ func main() {
 // Make a call to a secured resource
 func exampleResourceCall(client *http.Client) {
 	log.Println("Created client...")
-	const resourceUrl = "https://spring.users.runpaste.com/users/123"
-	resp, err := client.Get(resourceUrl)
+
+	resp, err := client.Get(ResourceURL)
 	log.Println("Got resource response...")
 	if err != nil {
 		log.Fatalf("Resource retrieval: %s\n", err)
 	}
 
+	log.Printf("%d", resp.StatusCode)
 	bytes, _ := ioutil.ReadAll(resp.Body)
 	log.Printf(string(bytes))
 }
