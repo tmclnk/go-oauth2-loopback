@@ -56,7 +56,7 @@ func SetupClient(conf *oauth2.Config, ch chan *http.Client) {
 	// open a web browser pointing to the auth server
 	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	log.Printf("Sleeping...")
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 	log.Printf("Opening browser at %s\n", url)
 	_ = open.Run(url)
 }
@@ -112,5 +112,7 @@ func exchange(code string, conf *oauth2.Config, ctx context.Context) (error, *oa
 	}
 	log.Printf("Token Type: %s\n", tok.TokenType)
 	log.Printf("Access Token: %s\n", tok.AccessToken)
+	log.Printf("IdToken: %s\n", tok.Extra("id_token"))
+	log.Printf("Valid: %t\n", tok.Valid())
 	return nil, tok
 }
